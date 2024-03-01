@@ -65,6 +65,7 @@ class gotrbot(OSRSBot):
         self.log_msg("Finished.")
         self.stop()
 
+
     def main_loop(self):
         start_time = time.time()
         end_time = start_time + (self.running_time * 60)
@@ -129,6 +130,7 @@ class gotrbot(OSRSBot):
         self.log_msg("Finished.")
         self.stop()
 
+
     #all Start and End Logic
 
     def start(self, api_m=MorgHTTPSocket()): # Local fuctions Called: handle_climbdown, guardian_fragments
@@ -170,7 +172,7 @@ class gotrbot(OSRSBot):
             for _ in range(20):
                 idle = api_m.get_is_player_idle()
                 if idle:
-                    self.log_msg("Cant find starting spot BLACK")
+                    self.log_msg("Found starting spot BLACK")
                     return True
                 else:
                     self.log_msg("not idle retying")
@@ -886,7 +888,18 @@ class gotrbot(OSRSBot):
                         return False
                 else:
                     self.log_msg("Portal:issues at cyan redclick and move again")
-                    return False
+                    time.sleep(1)                
+                    self.mouse.move_to(rocky2.random_point())
+                    red_click = self.mouse.click(check_red_click=True)
+                    self.log_msg("Portal:cyan redclick and move again2")
+                    if red_click:
+                        self.log_msg("Portal:cyan redclick is good2")
+                        self.log_msg("Portal:idle check again2")
+                        if self.essencechecknoportal():   
+                            return True
+                    else: 
+                        self.log_msg("Portal:issues idle check again2")       
+                        return False
             else:
                 self.log_msg("Portal:issue at Cyan again")
                 return False
@@ -1309,23 +1322,25 @@ class gotrbot(OSRSBot):
     
     def gamecheckfinishportal(self,api_m=MorgHTTPSocket()): # Local fuctions Called: repairpouch, handle_starting_spot
         if self.chatbox_textred("The Great"):
+            self.log_msg("elemental_runecraftcheck")
             if self.elemental_runecraftcheck():
                 self.log_msg("Guardian Died")
                 self.postgameportal()
+                self.postgame()
                 raise CustomErrorClassportal()
         
         if self.chatbox_textGuardian("The Great"):
-            self.log_msg("game finished")
+            self.log_msg("game finished portal")
             self.postgameportal()
+            self.postgame()
             raise CustomErrorClassportal()
         else:
             self.log_msg("game is still going")
     
     def postgame(self, api_m=MorgHTTPSocket(), api_s=StatusSocket()): # Local fuctions Called: repairpouch, handle_starting_spot
-        self.log_msg("gamefinshed setting up for new game")
+        self.log_msg("gamefinshed setting up for new game postgame")
         if self.repairpouch():
             if self.handle_starting_spot(api_m):
-
                 return
             else:
                 self.log_msg("crical error at handle_starting_spot")
@@ -1335,22 +1350,15 @@ class gotrbot(OSRSBot):
             exit()
 
     def postgameportal(self, api_m=MorgHTTPSocket(), api_s=StatusSocket()):
-        self.log_msg("gamefinshed setting up for new game")
+        self.log_msg("gamefinshed setting up for new game postgameportal")
         leave_portal = self.get_nearest_tag(clr.GREEN)
         if leave_portal:
             self.mouse.move_to(leave_portal.random_point())
             self.mouse.click()
             time.sleep(2.5)
-            if self.repairpouch():
-                    if self.handle_starting_spot(api_m):
-
-                        return
-                    else:
-                        self.log_msg("crical error at handle_starting_spot")
-                        exit()
-            else:    
-                    self.log_msg("crical error at repairpouch(check runes)")
-                    exit()
+        else:
+            self.log_msg("no green postgameportal")
+            return
 
     #essence Logic
 
