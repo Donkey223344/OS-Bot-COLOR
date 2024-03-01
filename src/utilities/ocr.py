@@ -203,10 +203,10 @@ if __name__ == "__main__":
     # ----------------
     # PARAMETERS
     # ----------------
-    area = win.chat
-    font = PLAIN_12
-    color = [clr.BLACK]
-    text = ["Welcome", "Old", "RuneScape"]  # find_text only
+    area = win.control_panel
+    font = PLAIN_11
+    color = [clr.CYAN, clr.OFF_CYAN]
+    text = ["0", "0", "0"]  # find_text only
 
     method = find_text
     # ----------------

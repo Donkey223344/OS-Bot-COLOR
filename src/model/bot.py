@@ -8,6 +8,7 @@ import re
 import threading
 import time
 import warnings
+import random
 from abc import ABC, abstractmethod
 from enum import Enum
 from typing import List, Union
@@ -287,6 +288,28 @@ class Bot(ABC):
             self.mouse.click()
         pag.keyUp("shift")
 
+    def Moverandomclick(self, slots: List[int]) -> None:
+            """
+            clicks inventory slots to click
+            Args:
+                slots: The indices of slots to click
+            """
+            self.log_msg("click")
+            for i, slot in enumerate(self.win.inventory_slots):
+                if i not in slots:
+                    continue
+                p = slot.random_point()
+                self.mouse.move_to(
+                    (p[0], p[1]),
+                    mouseSpeed="fastest",
+                    knotsCount=1,
+                    offsetBoundaryY=40,
+                    offsetBoundaryX=40,
+                    tween=pytweening.easeInOutQuad,
+                )
+                self.mouse.click()
+                time.sleep(random.uniform(0.1, 0.25))
+           
     def friends_nearby(self) -> bool:
         """
         Checks the minimap for green dots to indicate friends nearby.
@@ -438,7 +461,36 @@ class Bot(ABC):
         if ocr.find_text(contains, self.win.chat, ocr.PLAIN_12, clr.BLUE):
             return True
 
-    # --- Client Settings ---
+    def chatbox_textred(self, contains: str = None) -> Union[bool, str]:
+        """
+        Examines the chatbox for text. Currently only captures player chat text.
+        Args:
+            contains: The text to search for (single word or phrase). Case sensitive. If left blank,
+                      returns all text in the chatbox.
+        Returns:
+            True if exact string is found, False otherwise.
+            If args are left blank, returns the text in the chatbox.
+        """
+        if contains is None:
+            return ocr.extract_text(self.win.chat, ocr.PLAIN_12, clr.REDCHAT)
+        if ocr.find_text(contains, self.win.chat, ocr.PLAIN_12, clr.REDCHAT):
+            return True
+        
+    def chatbox_textGuardian(self, contains: str = None) -> Union[bool, str]:
+        """
+        Examines the chatbox for text. Currently only captures player chat text.
+        Args:
+            contains: The text to search for (single word or phrase). Case sensitive. If left blank,
+                      returns all text in the chatbox.
+        Returns:
+            True if exact string is found, False otherwise.
+            If args are left blank, returns the text in the chatbox.
+        """
+        if contains is None:
+            return ocr.extract_text(self.win.chat, ocr.PLAIN_12, clr.Guardian)
+        if ocr.find_text(contains, self.win.chat, ocr.PLAIN_12, clr.Guardian):
+            return True
+       
     def set_compass_north(self):
         self.log_msg("Setting compass North...")
         self.mouse.move_to(self.win.compass_orb.random_point())

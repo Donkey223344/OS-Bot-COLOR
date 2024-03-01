@@ -311,6 +311,30 @@ class MorgHTTPSocket:
             inventory.append(item_info)
         return inventory
 
+    def get_inv2(self):
+        """
+        Gets a dictionary representing the player inventory.
+        Returns:
+            Dictionary with item IDs as keys and total quantities as values.
+        """
+        data = self.__do_get(endpoint=self.inv_endpoint)
+        inventory = {}
+
+        for item in data:
+            item_id = item["id"]
+            quantity = item["quantity"]
+
+            if quantity == 0:
+                continue
+
+            if item_id in inventory:
+                inventory[item_id] += quantity
+            else:
+                inventory[item_id] = quantity
+
+        return inventory
+
+
     def get_if_item_in_inv(self, item_id: Union[List[int], int]) -> bool:
         """
         Checks if an item is in the inventory or not.

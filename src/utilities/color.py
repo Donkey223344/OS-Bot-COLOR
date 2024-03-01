@@ -50,6 +50,30 @@ RED = Color([255, 0, 0])
 WHITE = Color([255, 255, 255])
 YELLOW = Color([255, 255, 0])
 
+air = Color([204, 255, 255])
+water = Color ([0, 102, 255])
+law = Color ([0, 0, 102])
+body = Color ([34, 115, 229])
+chaos = Color ([255, 51, 0])
+fire = Color([204, 0, 0])
+blood = Color([153, 0, 0])
+cosmic = Color([204, 255, 51])
+nature = Color([0, 51, 0])
+earth = Color([101, 26, 26])
+death = Color([26, 26, 26])
+purpleish = Color([102, 0, 255])
+mind = Color([255, 153, 153])
+REDCHAT = Color([239, 16, 32])
+Guardian = Color([6,96,12]) 
+BLACKish = Color([0, 0, 10]) 
+
+
+
+
+
+
+
+
 """Colors for use with semi-transparent text"""
 OFF_CYAN = Color([0, 200, 200], [70, 255, 255])
 OFF_GREEN = Color([0, 100, 0], [30, 255, 255])

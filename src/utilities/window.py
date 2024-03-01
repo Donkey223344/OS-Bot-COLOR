@@ -62,6 +62,7 @@ class Window:
     game_view: Rectangle = None
     mouseover: Rectangle = None
     total_xp: Rectangle = None
+    gotrmouseover: Rectangle = None
 
     def __init__(self, window_title: str, padding_top: int, padding_left: int) -> None:
         """
@@ -140,6 +141,26 @@ class Window:
         raise WindowInitializationError()
 
     def __locate_chat(self, client_rect: Rectangle) -> bool:
+        """
+        Locates the chat area on the client.
+        Args:
+            client_rect: The client area to search in.
+        Returns:
+            True if successful, False otherwise.
+        """
+        if chat := imsearch.search_img_in_rect(imsearch.BOT_IMAGES.joinpath("ui_templates", "chat.png"), client_rect):
+            # Locate chat tabs
+            self.chat_tabs = []
+            x, y = 5, 143
+            for _ in range(7):
+                self.chat_tabs.append(Rectangle(left=x + chat.left, top=y + chat.top, width=52, height=19))
+                x += 62  # btn width is 52px, gap between each is 10px
+            self.chat = chat
+            return True
+        print("Window.__locate_chat(): Failed to find chatbox.")
+        return False
+    
+    def __locate_chathalf(self, client_rect: Rectangle) -> bool:
         """
         Locates the chat area on the client.
         Args:
@@ -278,6 +299,7 @@ class Window:
 
             self.game_view.subtract_list = [minimap, chat, control_panel]
         self.mouseover = Rectangle(left=self.game_view.left, top=self.game_view.top, width=407, height=26)
+        self.gotrmouseover = Rectangle(left=self.game_view.left, top=self.game_view.top, width=250, height=350)
         return True
 
     def __locate_minimap(self, client_rect: Rectangle) -> bool:
