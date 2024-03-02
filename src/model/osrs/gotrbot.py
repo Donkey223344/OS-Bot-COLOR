@@ -20,7 +20,6 @@ class gotrbot(OSRSBot):
         description = "Guardian of the rift bot"
         super().__init__(bot_title=bot_title, description=description)
         api_m = MorgHTTPSocket()
-        api_s = StatusSocket()
         self.options = {"hotkey": "f9"}
         # Initialize the running_time attribute
         self.running_time = 1
@@ -226,7 +225,7 @@ class gotrbot(OSRSBot):
 
     #all Altar Rune and stone Logic
 
-    def altar(self, api_s = StatusSocket(), api_m = MorgHTTPSocket()): # Local fuctions Called: pouchs, droptalismans
+    def altar(self, api_m = MorgHTTPSocket()): # Local fuctions Called: pouchs, droptalismans
         while True:
             altar = self.get_nearest_tag(clr.PINK)
             self.log_msg("Searching for altar1")
@@ -316,7 +315,7 @@ class gotrbot(OSRSBot):
                 time.sleep(0.5)
                 continue
 
-    def Stonealtarmain(self, api_s = StatusSocket(), api_m = MorgHTTPSocket()): # Local fuctions Called: guardian_stones, altar, find_guardian_stones, deposit_runes
+    def Stonealtarmain(self, api_m = MorgHTTPSocket()): # Local fuctions Called: guardian_stones, altar, find_guardian_stones, deposit_runes
         while True:
             self.log_msg("Stonealtarmain: guardian_stones")
             if self.guardian_stones():
@@ -349,7 +348,7 @@ class gotrbot(OSRSBot):
                 self.log_msg("guardian_stones issue")
                 return False
 
-    def find_guardian_stones(self, api_s = StatusSocket(), api_m = MorgHTTPSocket()): # Local fuctions Called: dude_guy
+    def find_guardian_stones(self, api_m = MorgHTTPSocket()): # Local fuctions Called: dude_guy
         self.log_msg("Attempting to send stones")
         catalytic = api_m.get_first_occurrence(26880)
         elemental = api_m.get_first_occurrence(26881)
@@ -395,12 +394,10 @@ class gotrbot(OSRSBot):
         
         return False
 
-    def deposit_runes(self, max_color_retries=5, api_m = MorgHTTPSocket(), api_s = StatusSocket()):  # Add a parameter for the maximum color search retries
+    def deposit_runes(self, max_color_retries=5, api_m = MorgHTTPSocket()):  # Add a parameter for the maximum color search retries
         if self.pouchcheck():
             time.sleep(random.uniform(0.2, 0.5))
             self.log_msg("deposit_runes")
-            api_m = MorgHTTPSocket()
-            api_s = StatusSocket()
             runes = api_m.get_first_occurrence([554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565])
 
             if runes:
@@ -443,7 +440,7 @@ class gotrbot(OSRSBot):
         else:
             return True
 
-    def arerunesgone(self, max_color_retries=20, api_s=StatusSocket(), api_m=MorgHTTPSocket()):
+    def arerunesgone(self, max_color_retries=20, api_m=MorgHTTPSocket()):
         if self.pouchcheck():    
             self.log_msg("deposit_runes")
             runes = api_m.get_first_occurrence([554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565])
@@ -472,7 +469,7 @@ class gotrbot(OSRSBot):
 
     #all Fragment Logic
 
-    def essencecinventorycheck(self, api_s = StatusSocket(), api_m = MorgHTTPSocket()):
+    def essencecinventorycheck(self, api_m = MorgHTTPSocket()):
         self.log_msg("minerockcheck")
         if self.minerockcheck():
             return True
@@ -480,12 +477,11 @@ class gotrbot(OSRSBot):
         self.log_msg("minerockcheck False")
         return False
 
-    def guardian_fragments(self): # Local fuctions Called: none
-        api_s = StatusSocket()
+    def guardian_fragments(self, api_m = MorgHTTPSocket()): # Local fuctions Called: none
         item_id = 26878
 
         for _ in range(50):  # Retry 50 times for the item amount condition
-            item_amount = api_s.get_inv_item_stack_amount(item_id)
+            item_amount = api_m.get_inv_item_stack_amount(item_id)
         
             if item_amount > 140:
                 self.log_msg(f"Log {item_amount} fragments")
@@ -517,10 +513,10 @@ class gotrbot(OSRSBot):
         self.log_msg("Can't meet item amount condition after 20 retries.")
         return False
 
-    def minerockcheck(self, api_s=StatusSocket(), api_m=MorgHTTPSocket()):
+    def minerockcheck(self, api_m=MorgHTTPSocket()):
         self.log_msg(f"Fragment check")
         item_id = 26878
-        item_amount = api_s.get_inv_item_stack_amount(item_id)
+        item_amount = api_m.get_inv_item_stack_amount(item_id)
         self.log_msg(f"Logged {item_amount} fragments")
         
         if item_amount < 50:
@@ -532,14 +528,14 @@ class gotrbot(OSRSBot):
         else:
             return True
 
-    def minerock(self, api_s=StatusSocket(), api_m=MorgHTTPSocket()):
+    def minerock(self, api_m=MorgHTTPSocket()):
         item_id = 26878
         if self.redclickcheck():
             time.sleep(1)
             self.log_msg("Successfully performed red click")
             for _ in range(40):  # Retry 40 times for the item amount condition
                 self.gamecheckfinish()
-                item_amount = api_s.get_inv_item_stack_amount(item_id)
+                item_amount = api_m.get_inv_item_stack_amount(item_id)
                 self.log_msg("Mining and portal loop")
                 self.log_msg(f"Current fragment count: {item_amount}")
                 time.sleep(1)
@@ -667,13 +663,13 @@ class gotrbot(OSRSBot):
                 self.log_msg("Guardian elemental_runecraft False")
                 return False
 
-    def fragcheck(self, api_s = StatusSocket(), api_m = MorgHTTPSocket()):
+    def fragcheck(self, api_m = MorgHTTPSocket()):
         if self.pouchcheck():
             return True
         else:
             return False
           
-    def elemental_runecraft(self, api_s=StatusSocket(), api_m=MorgHTTPSocket()):
+    def elemental_runecraft(self, api_m=MorgHTTPSocket()):
         while True:
             self.log_msg("Elemental Runecraft Start")
             region = self.win.gotrmouseover
@@ -731,7 +727,7 @@ class gotrbot(OSRSBot):
                             self.log_msg("found pink")
                             return True               
 
-    def catalytic_runecraft(self, api_s=StatusSocket(), api_m=MorgHTTPSocket()):
+    def catalytic_runecraft(self, api_m=MorgHTTPSocket()):
         while True:
             self.log_msg("catalytic_runecraft_Start")
             region = self.win.gotrmouseover
@@ -801,7 +797,7 @@ class gotrbot(OSRSBot):
 
 #New Portal spawn Logic
 
-    def portallogic(self, api_m=MorgHTTPSocket(), api_s=StatusSocket()):
+    def portallogic(self, api_m=MorgHTTPSocket()):
         if self.portalgreen():
             self.log_msg("portallogic: portalgreen True")
             if self.portaldespawn():
@@ -841,7 +837,7 @@ class gotrbot(OSRSBot):
             self.log_msg("portallogic: No Portal found")
             return False
 
-    def portalpart1(self, api_m=MorgHTTPSocket(), api_s=StatusSocket()):
+    def portalpart1(self, api_m=MorgHTTPSocket()):
         self.log_msg("Portal:looking for cyan")
         rocky = self.get_nearest_tag(clr.CYAN)
         if rocky:
@@ -867,7 +863,7 @@ class gotrbot(OSRSBot):
             self.log_msg("Portal:looking for cyan")
             return False
 
-    def portalpart2(self, api_m=MorgHTTPSocket(), api_s=StatusSocket()):
+    def portalpart2(self, api_m=MorgHTTPSocket()):
         self.log_msg("Portal:pouchcheck")
         if self.pouchcheck():
             rocky2 = self.get_nearest_tag(clr.CYAN)
@@ -911,7 +907,7 @@ class gotrbot(OSRSBot):
                 self.log_msg("Portal:issues portalleave")       
                 return False
 
-    def portalpart3(self, api_m=MorgHTTPSocket(), api_s=StatusSocket()):
+    def portalpart3(self, api_m=MorgHTTPSocket()):
         self.log_msg("Portal:pouchcheck")
         if self.pouchcheck():
             rocky2 = self.get_nearest_tag(clr.CYAN)
@@ -948,7 +944,7 @@ class gotrbot(OSRSBot):
                 self.log_msg("Portal:issues portalleave")       
                 return False
 
-    def portalgreen(self, api_m=MorgHTTPSocket(), api_s=StatusSocket()):
+    def portalgreen(self, api_m=MorgHTTPSocket()):
         self.log_msg("Looking for Portal")
         portal = self.get_nearest_tag(clr.GREEN)
         if portal:
@@ -987,7 +983,7 @@ class gotrbot(OSRSBot):
             self.log_msg("No Portal found")
             return False   
 
-    def Guardianessence(self, api_m=MorgHTTPSocket(), api_s=StatusSocket()): # Local fuctions Called: none
+    def Guardianessence(self, api_m=MorgHTTPSocket()): # Local fuctions Called: none
         inventory_data = api_m.get_inv2()
         GUARDIAN_ESSENCE = inventory_data.get(26879, 0)
         if GUARDIAN_ESSENCE > 10:
@@ -997,7 +993,7 @@ class gotrbot(OSRSBot):
             self.log_msg("You have 10 or fewer Essence.")
             return True
 
-    def portalleave(self, api_m=MorgHTTPSocket(), api_s=StatusSocket()):
+    def portalleave(self, api_m=MorgHTTPSocket()):
         leave = self.get_nearest_tag(clr.GREEN)
         if leave:
             self.log_msg("Portal:found green we leaving cya")
@@ -1019,7 +1015,7 @@ class gotrbot(OSRSBot):
             self.log_msg("Portal:issue at trying to leave")
             return False
 
-    def portaldespawn(self, api_m=MorgHTTPSocket(), api_s=StatusSocket()):
+    def portaldespawn(self, api_m=MorgHTTPSocket()):
         while True:
             check_portal = self.get_nearest_tag(clr.GREEN)
             self.log_msg("portaldespawn GREEN found")
@@ -1052,7 +1048,7 @@ class gotrbot(OSRSBot):
    
     #Pouch Logic + talismans
 
-    def essencecheck(self, api_m=MorgHTTPSocket(), api_s=StatusSocket(), max_retries=20): 
+    def essencecheck(self, api_m=MorgHTTPSocket(), max_retries=20): 
         for _ in range(max_retries):
             inventory_data = api_m.get_inv2()
             GUARDIAN_ESSENCE = inventory_data.get(26879, 0)
@@ -1072,7 +1068,7 @@ class gotrbot(OSRSBot):
         self.gamecheckfinishportal()
         return False
 
-    def essencechecknoportal(self, api_m=MorgHTTPSocket(), api_s=StatusSocket(), max_retries=20): 
+    def essencechecknoportal(self, api_m=MorgHTTPSocket(), max_retries=20): 
         for _ in range(max_retries):
             inventory_data = api_m.get_inv2()
             GUARDIAN_ESSENCE = inventory_data.get(26879, 0)
@@ -1088,7 +1084,6 @@ class gotrbot(OSRSBot):
         self.log_msg("pessencecheck error")
         self.gamecheckfinishportal()
         return False
-    #def pouchlogic(self, api_m=MorgHTTPSocket(),api_s = StatusSocket()):
             
     def repairpouch(self, api_m=MorgHTTPSocket()): # Local fuctions Called: none
         pyautogui.hotkey("f9")
@@ -1120,11 +1115,11 @@ class gotrbot(OSRSBot):
 
         self.log_msg("contact darkmage failed")
 
-    def pouchs(self, api_m=MorgHTTPSocket(),api_s = StatusSocket()): # Local fuctions Called: none
+    def pouchs(self, api_m=MorgHTTPSocket()): # Local fuctions Called: none
         if ocr.find_text("0", self.win.control_panel, ocr.PLAIN_11, [clr.CYAN, clr.OFF_CYAN]):
             self.log_msg("pouchcheck found 0")
             pouch_ids = [5512, 5514, 26784]
-            pouchs = api_s.get_inv_item_indices(pouch_ids)
+            pouchs = api_m.get_inv_item_indices(pouch_ids)
             if pouchs:
                 self.Moverandomclick(pouchs)
                 self.log_msg("found pouch")
@@ -1136,11 +1131,11 @@ class gotrbot(OSRSBot):
             self.log_msg("pouchcheck not 0")
             return True
 
-    def pouchs2(self, api_m=MorgHTTPSocket(),api_s = StatusSocket()): # Local fuctions Called: none
+    def pouchs2(self, api_m=MorgHTTPSocket()): # Local fuctions Called: none
         if ocr.find_text("0", self.win.control_panel, ocr.PLAIN_11, [clr.CYAN, clr.OFF_CYAN]):
             self.log_msg("pouchcheck2 found 0")
             pouch_ids = [5509, 5510, 26784]
-            pouchs = api_s.get_inv_item_indices(pouch_ids)
+            pouchs = api_m.get_inv_item_indices(pouch_ids)
             if pouchs:
                 self.Moverandomclick(pouchs)
                 self.log_msg("found pouch2")
@@ -1152,10 +1147,10 @@ class gotrbot(OSRSBot):
             self.log_msg("pouchcheck2 not 0")
             return True
 
-    def pouchsaltar(self, api_m=MorgHTTPSocket(),api_s = StatusSocket()):
+    def pouchsaltar(self, api_m=MorgHTTPSocket()):
             self.log_msg("pouchcheck found 0")
             pouch_ids = [5512, 5514, 26784]
-            pouchs = api_s.get_inv_item_indices(pouch_ids)
+            pouchs = api_m.get_inv_item_indices(pouch_ids)
             if pouchs:
                 self.Moverandomclick(pouchs)
                 self.log_msg("found pouch")
@@ -1163,10 +1158,10 @@ class gotrbot(OSRSBot):
             else:
                 return False
     
-    def pouchsaltar2(self, api_m=MorgHTTPSocket(),api_s = StatusSocket()):
+    def pouchsaltar2(self, api_m=MorgHTTPSocket()):
             self.log_msg("pouchcheck found 0")
             pouch_ids = [5509, 5510, 5512, 26784]
-            pouchs = api_s.get_inv_item_indices(pouch_ids)
+            pouchs = api_m.get_inv_item_indices(pouch_ids)
             if pouchs:
                 self.Moverandomclick(pouchs)
                 self.log_msg("found pouch")
@@ -1174,14 +1169,14 @@ class gotrbot(OSRSBot):
             else:
                 return False
 
-    def droptalismans(self, api_m=MorgHTTPSocket(), api_s=StatusSocket()): # Local fuctions Called: none
-        talismans = api_s.get_inv_item_indices([26887, 26888, 26889, 26890, 26891, 26892, 26893, 26894, 26895, 26896, 26897, 26898])
+    def droptalismans(self, api_m=MorgHTTPSocket()): # Local fuctions Called: none
+        talismans = api_m.get_inv_item_indices([26887, 26888, 26889, 26890, 26891, 26892, 26893, 26894, 26895, 26896, 26897, 26898])
         self.drop(talismans)
         return
 
     #Idle/retry Logic
 
-    def is_player_idle(self, api_m=MorgHTTPSocket(), api_s=StatusSocket(), max_retries=20): # Local fuctions Called: portal_check
+    def is_player_idle(self, api_m=MorgHTTPSocket(), max_retries=20): # Local fuctions Called: portal_check
             for _ in range(max_retries):
                 self.log_msg("is_player_idle loop")
                 time.sleep(1)
@@ -1197,7 +1192,7 @@ class gotrbot(OSRSBot):
                 
             return False
 
-    def is_player_idle2(self, api_m=MorgHTTPSocket(), api_s=StatusSocket(), max_retries=20): # Local fuctions Called: portal_check
+    def is_player_idle2(self, api_m=MorgHTTPSocket(), max_retries=20): # Local fuctions Called: portal_check
             for _ in range(max_retries):
                 time.sleep(1)
                 portal = self.portallogic()
@@ -1213,7 +1208,7 @@ class gotrbot(OSRSBot):
                 
             return False
 
-    def is_player_idle3(self, api_m=MorgHTTPSocket(), api_s=StatusSocket(), max_retries=20): # Local fuctions Called: none
+    def is_player_idle3(self, api_m=MorgHTTPSocket(), max_retries=20): # Local fuctions Called: none
             for _ in range(max_retries):
                 time.sleep(1)
                 self.log_msg("is_player_idle3 ")
@@ -1223,7 +1218,7 @@ class gotrbot(OSRSBot):
 
             return False
 
-    def pinkcheck(self, api_m=MorgHTTPSocket(), api_s=StatusSocket(), max_retries=2): # Local fuctions Called: none
+    def pinkcheck(self, api_m=MorgHTTPSocket(), max_retries=2): # Local fuctions Called: none
         for _ in range(max_retries):
             time.sleep(1)
             self.log_msg("pinkcheck ")
@@ -1237,7 +1232,7 @@ class gotrbot(OSRSBot):
 
         return False
 
-    def redclickcheck(self, api_m=MorgHTTPSocket(), api_s=StatusSocket(), max_retries=20):
+    def redclickcheck(self, api_m=MorgHTTPSocket(), max_retries=20):
         for _ in range(max_retries):
             time.sleep(1)
             rock = self.get_nearest_tag(clr.PURPLE)
@@ -1264,9 +1259,7 @@ class gotrbot(OSRSBot):
           
     #Exception function Logic
 
-    def elemental_runecraftcheck(self, api_m=MorgHTTPSocket(), api_s=StatusSocket()):
-            api_m = MorgHTTPSocket()
-            api_s = StatusSocket()
+    def elemental_runecraftcheck(self, api_m=MorgHTTPSocket()):
             self.log_msg("Elemental game check")
             region = self.win.gotrmouseover
 
@@ -1337,7 +1330,7 @@ class gotrbot(OSRSBot):
         else:
             self.log_msg("game is still going")
     
-    def postgame(self, api_m=MorgHTTPSocket(), api_s=StatusSocket()): # Local fuctions Called: repairpouch, handle_starting_spot
+    def postgame(self, api_m=MorgHTTPSocket()): # Local fuctions Called: repairpouch, handle_starting_spot
         self.log_msg("gamefinshed setting up for new game postgame")
         if self.repairpouch():
             if self.handle_starting_spot(api_m):
@@ -1349,7 +1342,7 @@ class gotrbot(OSRSBot):
             self.log_msg("crical error at repairpouch(check runes)")
             exit()
 
-    def postgameportal(self, api_m=MorgHTTPSocket(), api_s=StatusSocket()):
+    def postgameportal(self, api_m=MorgHTTPSocket()):
         self.log_msg("gamefinshed setting up for new game postgameportal")
         leave_portal = self.get_nearest_tag(clr.GREEN)
         if leave_portal:
@@ -1362,7 +1355,7 @@ class gotrbot(OSRSBot):
 
     #essence Logic
 
-    def inventorycheck(self, api_m=MorgHTTPSocket(), api_s=StatusSocket()): # Local fuctions Called: none
+    def inventorycheck(self, api_m=MorgHTTPSocket()): # Local fuctions Called: none
 
 
         inventory_data = api_m.get_inv2()
@@ -1378,7 +1371,7 @@ class gotrbot(OSRSBot):
 
 
     # Unused functions
-    def fillpouch(self, api_m=MorgHTTPSocket(), api_s=StatusSocket()): #unused
+    def fillpouch(self, api_m=MorgHTTPSocket()): #unused
         self.pouchs()
         bench = self.get_nearest_tag(clr.RED)
         if bench:
@@ -1402,7 +1395,7 @@ class gotrbot(OSRSBot):
         else:
             return False
 
-    def pouchcheck(self, api_m=MorgHTTPSocket(), api_s=StatusSocket()):
+    def pouchcheck(self, api_m=MorgHTTPSocket()):
         if ocr.find_text("0", self.win.control_panel, ocr.PLAIN_11, [clr.CYAN, clr.OFF_CYAN]):
             self.log_msg("pouchcheck found 0")
             return True
@@ -1411,7 +1404,7 @@ class gotrbot(OSRSBot):
             self.log_msg("pouchcheck not 0")
             return False
 
-    def pouchcheck2(self, api_m=MorgHTTPSocket(), api_s=StatusSocket()):
+    def pouchcheck2(self, api_m=MorgHTTPSocket()):
         if ocr.find_text("0", self.win.control_panel, ocr.PLAIN_11, [clr.CYAN, clr.OFF_CYAN]):
             self.log_msg("pouchcheck found 0")
             return True
@@ -1429,11 +1422,10 @@ class gotrbot(OSRSBot):
         self.mouse.move_to(self.win.inventory_slots[item_location].random_point(),mouseSpeed="fastest")
         self.mouse.click()
      
-    def inventoryfullcheck(self, max_retires=30, retry_delay=1): #unused
-        api_s = StatusSocket()
+    def inventoryfullcheck(self, max_retires=30, retry_delay=1, api_m=MorgHTTPSocket()): #unused
         for _ in range(max_retires):
 
-            if api_s.get_is_inv_full():
+            if api_m.get_is_inv_full():
                 return True  
             time.sleep(retry_delay)
         return False          
