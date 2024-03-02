@@ -112,12 +112,12 @@ class gotrbot(OSRSBot):
 
             except CustomErrorClass as e:
                 self.log_msg(e)
-                print("game exception caught smelly ", time.time())
+                self.log_msg("Gameend outside of portal")
                 continue
 
             except CustomErrorClassportal as e:
                 self.log_msg(e)
-                print("game exception portal ", time.time())
+                self.log_msg("Gameend in of portal")
                 continue
 
         # Update progress
@@ -1303,13 +1303,20 @@ class gotrbot(OSRSBot):
 
             else:
                 self.log_msg("Guardian Died")
-                self.postgame()
-                raise CustomErrorClass()
+                if self.postgame():
+                    raise CustomErrorClass()
+                else:
+                    self.log_msg("error at gamecheckfin Guardian Died postgame")
+                    exit()
+
         
         if self.chatbox_textGuardian("The Great"):
             self.log_msg("game finished")
-            self.postgame()
-            raise CustomErrorClass()
+            if self.postgame():
+                raise CustomErrorClass()
+            else:
+                self.log_msg("error at gamecheckfin game finished postgame")
+                exit()
         else:
             self.log_msg("game is still going")
     
@@ -1334,7 +1341,8 @@ class gotrbot(OSRSBot):
         self.log_msg("gamefinshed setting up for new game postgame")
         if self.repairpouch():
             if self.handle_starting_spot(api_m):
-                return
+                self.log_msg("handle_start finished true postgame")
+                return True
             else:
                 self.log_msg("crical error at handle_starting_spot")
                 exit()
