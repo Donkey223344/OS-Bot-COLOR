@@ -108,6 +108,7 @@ class gotrbot(OSRSBot):
                             continue
                 else:
                     self.log_msg("Critical error at start")
+                    self.record()
                     exit()
 
             except CustomErrorClass as e:
@@ -127,6 +128,7 @@ class gotrbot(OSRSBot):
         # Finalization steps after the main loop
         self.update_progress(1)
         self.log_msg("Finished.")
+        self.record()
         self.stop()
 
 
@@ -179,6 +181,7 @@ class gotrbot(OSRSBot):
 
         else:
             self.log_msg("Cant find starting spot BLACK")
+            self.record()
             time.sleep(1)
             return False
 
@@ -846,6 +849,7 @@ class gotrbot(OSRSBot):
             red_click = self.mouse.click(check_red_click=True)
             self.log_msg("Portal:cyan redclick and move")
             if red_click:
+                time.sleep(3)
                 self.log_msg("Portal:redclick and move passed")
                 if self.essencechecknoportal():
                     self.log_msg("Portal:am idle")
@@ -1321,6 +1325,7 @@ class gotrbot(OSRSBot):
             self.log_msg("game is still going")
     
     def gamecheckfinishportal(self,api_m=MorgHTTPSocket()): # Local fuctions Called: repairpouch, handle_starting_spot
+        self.log_msg("gamecheckfinishportal")
         if self.chatbox_textred("The Great"):
             self.log_msg("elemental_runecraftcheck")
             if self.elemental_runecraftcheck():
@@ -1437,6 +1442,12 @@ class gotrbot(OSRSBot):
                 return True  
             time.sleep(retry_delay)
         return False          
+
+
+    def record(self):
+        self.log_msg("recording")
+        pyautogui.hotkey('ctrl', 'shift', 's')
+
 
 
      
